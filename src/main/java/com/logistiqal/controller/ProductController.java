@@ -38,6 +38,7 @@ public class ProductController {
 	@PostMapping({"/add"})
 	public ModelAndView add(@ModelAttribute Product product, RedirectAttributes ra) {
 		ProductVO response = productService.add(product);
+		System.out.println(response.getStatusCode());
 		ra.addFlashAttribute("msj", response.getMessage());
 		if (response.getStatusCode() != "0") {
 			return new ModelAndView("redirect:/addForm");
