@@ -24,7 +24,7 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
-	@GetMapping({"/home"})
+	@GetMapping({"/", "/home"})
 	public String home(Model model) {
 		model.addAttribute("VO", productService.getAllProducts());
 		return "home";
@@ -48,8 +48,16 @@ public class ProductController {
 	}
 
 	@GetMapping({"/updateForm"})
-	public String update(Model model) {
-		return "updateForm";
+	public String updateForm(Model model, @RequestParam String idProduct) {
+		ProductVO response = productService.findById(Integer.parseInt(idProduct));
+		
+		if (response.getStatusCode().equals("0")) {
+			model.addAttribute("msj", response.getMessage());
+			model.addAttribute("Product", response.getProductList().get(0));
+			return "updateForm";
+		} else {
+			return "redirect:/home";
+		}
 	}
 
 	@PostMapping({"/update"})
@@ -67,7 +75,7 @@ public class ProductController {
 	public ModelAndView delete(Model model, @RequestParam String idProduct, RedirectAttributes ra) {
 		
 		ProductVO response = new ProductVO();
-		response.setMessage("Could not delete user, sorry.");
+		response.setMessage("Could not delete product, sorry.");
 		
 		try {
 			Product productToDelete = new Product();
