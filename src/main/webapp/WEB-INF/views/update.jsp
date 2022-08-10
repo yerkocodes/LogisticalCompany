@@ -15,8 +15,12 @@
 	<form action="/update" method="post">
 		<table>
 			<tr>
+				<td>Id Product:</td>
+				<td><input type="hidden" name="idProduct" value="${Product.getIdProduct()}"/></td>
+			</tr>
+			<tr>
 				<td>Code Product:</td>
-				<td><input type="text" name="code" value="${Product.getStatusCode()}" disabled /></td>
+				<td><input type="text" name="code" value="${Product.getCode()}"/></td>
 			</tr>
 
 			<tr>

@@ -21,4 +21,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer>, Pag
 	
 	@Query("FROM Product WHERE name = :userName AND password = :userPass")
 	public List<Product> findByNombreAndClave(@Param("userName") String name, @Param("userPass") String password);
+	
+	@Query("FROM Product WHERE id_product = :id")
+	public Product findByID(@Param("id") Integer id);
 }

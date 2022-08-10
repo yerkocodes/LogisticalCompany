@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.logistiqal.LogistiqalCompanyApplication;
 import com.logistiqal.model.Product;
 import com.logistiqal.service.ProductService;
+import com.logistiqal.util.Util;
 import com.logistiqal.vo.ProductVO;
 
 @Controller
@@ -24,9 +26,19 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
-	@GetMapping({"/", "/home"})
-	public String home(Model model) {
+	@GetMapping("/")
+	public RedirectView home() {
+		return new RedirectView("/home");
+	}
+	
+	@GetMapping({"/home"})
+	public String home(Model model, @RequestParam(defaultValue = "1") Integer p) {
 		model.addAttribute("VO", productService.getAllProducts());
+		
+		Integer totalPages = productService.getPageCount(6).getValue().intValue();
+		model.addAttribute("pages", Util.getArrayPages(p, totalPages));
+		model.addAttribute("currentPage", p);
+		model.addAttribute("VO", productService.getPage(p-1, 6));
 		return "home";
 	}
 
@@ -48,13 +60,12 @@ public class ProductController {
 	}
 
 	@GetMapping({"/updateForm"})
-	public String updateForm(Model model, @RequestParam String idProduct) {
-		ProductVO response = productService.findById(Integer.parseInt(idProduct));
-		
+	public String updateForm(Model model, @RequestParam Integer idProduct) {
+		ProductVO response = productService.findById(idProduct);
 		if (response.getStatusCode().equals("0")) {
 			model.addAttribute("msj", response.getMessage());
 			model.addAttribute("Product", response.getProductList().get(0));
-			return "updateForm";
+			return "update";
 		} else {
 			return "redirect:/home";
 		}
